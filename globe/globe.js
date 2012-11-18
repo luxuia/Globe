@@ -105,10 +105,14 @@ DAT.Globe = function(container, colorFn) {
   var context, vecWorld = [], vecScreen = [];
 
   var LinuxVersion = [
-						["Mint"],
+						["Linux Mint"],
 						["Ubuntu"],
                         ["Debian"],
-                        ["HelloWorld"]
+                        ["Fedora Core"],
+                        ["Mandrake"],
+                        ["Red Hat Linux"],
+                        ["SuSE"],
+                        ["Gentoo"]
   ];
   var projectMat = new THREE.Projector();
 
@@ -157,10 +161,21 @@ DAT.Globe = function(container, colorFn) {
 	context = document.getElementById("context");
 
     for (var i = 0; i < LinuxVersion.length; i++) {
-        var a = Math.random()*2*Math.PI, b = Math.random()*2*Math.PI, c=Math.random()*2*Math.PI;
-        vecWorld.push(a, b, c);
-        var vec = new THREE.Vector3(a, b, c);
-        vecScreen.push(projectMat.projectVector(vec, camera));
+        var a = Math.random()*2*Math.PI, b = Math.random()*2*Math.PI;
+        var aa = 200*Math.cos(a)*Math.cos(b),
+            bb = 200*Math.cos(a)*Math.sin(b),
+            cc = 200*Math.sin(a);
+
+        var vec = new THREE.Vector3(aa, bb, cc);
+        vecWorld.push(vec.clone());
+
+        //console.log(vec.x, vec.y, vec.z);
+
+        vecScreen.push((projectMat.unprojectVector(vec, camera)).clone());
+        //console.log(vecWorld[i].x, vecWorld[i].y, vecWorld[i].z);
+        //
+        //
+        // console.log(vecScreen[i].x, vecScreen[i].y, vecScreen[i].z);
     }
 
 
@@ -172,7 +187,7 @@ DAT.Globe = function(container, colorFn) {
         element.setAttribute("id", LinuxVersion[i]);
         element.setAttribute("class", "absoluteContext");
         var x = vecScreen[i].x, y = vecScreen[i].y;
-        element.style.cssText="left:"+ i*100 + "px; top:" + i*100+ "px;";
+        element.style.cssText="left:"+ x + "px; top:" + y+ "px;";
         context.appendChild(element);
     }
 	
@@ -402,8 +417,15 @@ DAT.Globe = function(container, colorFn) {
 
   function updateVecScreen() {
     for (var i = 0; i < vecScreen.length; i++) {
-        var vec = projectMat.projectVector(vecWorld[i], camera);
-        vecScreen[i]=vec;
+
+        //console.log("vecWorld:", vecWorld[i].x, vecWorld[i].y, vecWorld[i].z);
+        //console.log(camera.matrixWorld);
+        //var vec = projectMat.unprojectVector(vecWorld[i].clone(), camera);
+       //
+
+        var vec = worldToScrennXY(vecWorld[i], camera);
+        vecScreen[i] = vec;
+        console.log("vecScreen:", vecScreen[i].x, vecScreen[i].y, vecScreen[i].z);
     }
   }
 
@@ -425,6 +447,20 @@ DAT.Globe = function(container, colorFn) {
     render();
   }
 
+  function worldToScrennXY(position, camera) {
+      var pos = position.clone();
+      var projScreenMat = new THREE.Matrix4();
+      projScreenMat.multiply(camera.projectionMatrix, camera.matrixWorldInverse);
+      projScreenMat.multiplyVector3( pos );
+
+      return {
+          x: (pos.x+1)*w/2+renderer.domElement.offsetLeft,
+          y: (pos.y+1)*h/2+renderer.domElement.offsetTop,
+          z: pos.z
+      };
+
+  }
+
   function render() {
     zoom(curZoomSpeed);
 
@@ -438,10 +474,17 @@ DAT.Globe = function(container, colorFn) {
 
     vector.copy(camera.position);
 
-
     updateVecScreen();
     for (var i = 0; i < vecScreen.length; i++) {
-        document.getElementById(LinuxVersion[i]).style.cssText ="left:"+vecScreen[i].x + "px; top:" + vecScreen[i].y+ "px;";
+        document.getElementById(LinuxVersion[i]).style.cssText ="right:"+vecScreen[i].x + "px; top:" + vecScreen[i].y+ "px;";
+
+        var fontSize = Math.sqrt(vecWorld[i].distanceTo(camera.position)-distance+200);
+        if (fontSize < 8) {
+            document.getElementById(LinuxVersion[i]).style.display = "none";
+        } else {
+        document.getElementById(LinuxVersion[i]).style.fontSize = fontSize+"px";
+        }
+
     }
 
 

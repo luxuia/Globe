@@ -10,7 +10,7 @@
       body {
         margin: 0;
         padding: 0;
-        background: #000000 url(/globe/loading.gif) center center no-repeat;
+        background: #000000 url(./loading.gif) center center no-repeat;
         color: #ffffff;
         font-family: sans-serif;
         font-size: 13px;
@@ -69,11 +69,40 @@
       .absoluteContext {
           position: absolute;
           background-color: rgba(255, 255, 255, 0.2);
-          border-radius: 5px;
-          font:50px Georgia;
-          padding:10px;
+
+          border: 3px solid #ffffff;
+          border-radius: 10px 10px 10px 10px;
+          color: #ffffff;
+          margin: 10px 0 20px;
+          padding: 15px;
       }
 
+
+      .absoluteContext:after {
+          border-color: #FFFFFF transparent;
+          border-style: solid;
+          border-width: 13px 13px 0;
+          bottom: -13px;
+          content: "";
+          display: block;
+          left: 27px;
+          position: absolute;
+          width: 0;
+          background-color: rgba(255, 255, 255, 0);
+      }
+
+      .absoluteContext:before {
+          border-color: #ffffff transparent;
+          border-style: solid;
+          border-width: 20px 20px 0;
+          bottom: -20px;
+          content: "";
+          display: block;
+          left: 20px;
+          position: absolute;
+          width: 0;
+          background-color: rgba(255, 255, 255, 0);
+      }
 
       .year {
         font: 16px Georgia;
@@ -104,7 +133,7 @@
         position: absolute;
         bottom: 15px;
         left: 20px;
-        background: url(/globe/ce.png);
+        background: url(./ce.png);
       }
 
 
@@ -123,13 +152,12 @@
 
 		<div id="context"></div>
 	</div>
-  <script type="text/javascript" src="/globe/third-party/Three/ThreeWebGL.js"></script>
-  <script type="text/javascript" src="/globe/third-party/Three/ThreeExtras.js"></script>
-  <script type="text/javascript" src="/globe/third-party/Three/RequestAnimationFrame.js"></script>
-  <script type="text/javascript" src="/globe/third-party/Three/Detector.js"></script>
-  <script type="text/javascript" src="/globe/third-party/Tween.js"></script>
-  <script type="text/javascript" src="/globe/CSS3Renderer.js"></script>
-  <script type="text/javascript" src="/globe/globe.js"></script>
+  <script type="text/javascript" src="./third-party/Three/ThreeWebGL.js"></script>
+  <script type="text/javascript" src="./third-party/Three/ThreeExtras.js"></script>
+  <script type="text/javascript" src="./third-party/Three/RequestAnimationFrame.js"></script>
+  <script type="text/javascript" src="./third-party/Three/Detector.js"></script>
+  <script type="text/javascript" src="./third-party/Tween.js"></script>
+  <script type="text/javascript" src="./globe.js"></script>
   <script type="text/javascript">
 
     if(!Detector.webgl){
@@ -167,7 +195,7 @@
 
 
       xhr = new XMLHttpRequest();
-      xhr.open('GET', '/globe/population909500.json', true);
+      xhr.open('GET', './population909500.json', true);
       xhr.onreadystatechange = function(e) {
         if (xhr.readyState === 4) {
           if (xhr.status === 200) {
