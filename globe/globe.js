@@ -88,7 +88,7 @@ DAT.Globe = function(container, colorFn) {
   var cssrenderer, cssscene;
   var overRenderer;
 
-  var imgDir = '/globe/';
+  var imgDir = './';
 
   var curZoomSpeed = 0;
   var zoomSpeed = 50;
@@ -105,14 +105,14 @@ DAT.Globe = function(container, colorFn) {
   var context, vecWorld = [], vecScreen = [];
 
   var LinuxVersion = [
-						["Linux Mint"],
-						["Ubuntu"],
-                        ["Debian"],
-                        ["Fedora Core"],
-                        ["Mandrake"],
-                        ["Red Hat Linux"],
-                        ["SuSE"],
-                        ["Gentoo"]
+						["Linux Mint", "mint.jpg"],
+						["Ubuntu", "ubuntu.jpg"],
+                        ["Debian", "asd"],
+                        ["Fedora Core", ""],
+                        ["Mandrake", ""],
+                        ["Red Hat Linux", "RedHat.jpg"],
+                        ["SuSE", "SuSe.jpg"],
+                        ["Gentoo", "MeeGo.jpg"]
   ];
   var projectMat = new THREE.Projector();
 
@@ -179,15 +179,31 @@ DAT.Globe = function(container, colorFn) {
     }
 
 
+    function createElement(block, attr, src) {
+
+    }
+
 	for (var i = 0; i < LinuxVersion.length; i++) {
         var element = document.createElement('div');
-        var elementtext = document.createTextNode(LinuxVersion[i]);
+        var elementtext = document.createElement('p');
+        var elementtextp = document.createTextNode(LinuxVersion[i][0]);
+        elementtext.appendChild(elementtextp);
 
         element.appendChild(elementtext);
-        element.setAttribute("id", LinuxVersion[i]);
+        element.setAttribute("id", LinuxVersion[i][0]);
         element.setAttribute("class", "absoluteContext");
         var x = vecScreen[i].x, y = vecScreen[i].y;
         element.style.cssText="left:"+ x + "px; top:" + y+ "px;";
+
+
+        var elementimage = document.createElement('img');
+        elementimage.setAttribute("id", LinuxVersion[i][0]+'_img');
+        elementimage.setAttribute("src", imgDir+LinuxVersion[i][1]);
+        elementimage.setAttribute("width", 40);
+        elementimage.setAttribute("height", 40);
+
+        element.appendChild(elementimage);
+
         context.appendChild(element);
     }
 	
@@ -425,7 +441,7 @@ DAT.Globe = function(container, colorFn) {
 
         var vec = worldToScrennXY(vecWorld[i], camera);
         vecScreen[i] = vec;
-        console.log("vecScreen:", vecScreen[i].x, vecScreen[i].y, vecScreen[i].z);
+        //console.log("vecScreen:", vecScreen[i].x, vecScreen[i].y, vecScreen[i].z);
     }
   }
 
@@ -476,13 +492,16 @@ DAT.Globe = function(container, colorFn) {
 
     updateVecScreen();
     for (var i = 0; i < vecScreen.length; i++) {
-        document.getElementById(LinuxVersion[i]).style.cssText ="right:"+vecScreen[i].x + "px; top:" + vecScreen[i].y+ "px;";
+        document.getElementById(LinuxVersion[i][0]).style.cssText ="right:"+vecScreen[i].x + "px; top:" + vecScreen[i].y+ "px;";
 
-        var fontSize = Math.sqrt(vecWorld[i].distanceTo(camera.position)-distance+200);
+        var fontSize = vecWorld[i].distanceTo(camera.position)-distance+200;
         if (fontSize < 8) {
-            document.getElementById(LinuxVersion[i]).style.display = "none";
+            document.getElementById(LinuxVersion[i][0]).style.display = "none";
         } else {
-        document.getElementById(LinuxVersion[i]).style.fontSize = fontSize+"px";
+            document.getElementById(LinuxVersion[i][0]).style.fontSize = Math.sqrt(fontSize)+"px";
+            document.getElementById(LinuxVersion[i][0]+"_img").style.height = Math.sqrt(fontSize)*LinuxVersion[i][0].length + "px";
+            console.log(LinuxVersion[i][0].length);
+            document.getElementById(LinuxVersion[i][0]+"_img").style.width = Math.sqrt(fontSize)*LinuxVersion[i][0].length*0.7 + "px";
         }
 
     }
